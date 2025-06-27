@@ -1,89 +1,117 @@
-🔌 Single-Wire Text Transmitter – Minimalist Arduino Communication Protocol
-One wire. Zero libraries. All communication.
-This project is a no-frills, bare-metal protocol to transmit and receive alphanumeric characters (plus space and newline) between two Arduinos using just one digital pin. It’s all done using bit-level control, timing pulses, and custom encoding — proving you don’t need UART, I2C, or SPI to get two microcontrollers talking.
+# 🔌 Single-Wire Text Transmitter (Minimal Arduino Protocol)
 
-🚀 Why This Exists
-Sometimes, you just want to build your own protocol from scratch and see if you can bend hardware to your will. This project is all about:
+A minimal communication protocol to transmit text over a single digital pin using only timing and voltage changes — no libraries, no UART, just pure bit-banging.
 
-Learning low-level GPIO communication
+This project lets one microcontroller send characters to another over a **single wire** using a custom 6-bit encoding. Ideal for learning low-level communication and timing control with Arduino.
 
-Building a 6-bit character protocol
+---
 
-Timing control using delay()
+## 💡 Features
 
-Sending/receiving characters without any serial link between Arduinos
+- 🧠 Simple 6-bit encoding table for `a-z`, `0-9`, space, and newline
+- 🔄 Bidirectional switching between Transmit/Receive based on serial input
+- ⏱️ Pulse-based data signaling with minimal delays
+- 💬 Real-time serial output of decoded characters
+- 🔌 Single GPIO wire used for transmission
 
-Flexing your firmware fundamentals 💪
+---
 
-🛠️ How It Works
-✅ Encoding
-Each character (0-9, a-z, space, newline) is mapped to a unique 6-bit binary sequence stored in KJTP.
+## 🛠️ Supported Platforms
 
-✅ Transmitting
-A HIGH pulse (10ms) starts each bit
+- ✅ **Arduino IDE** (v1.x or v2.x)
+- ✅ **PlatformIO** (VS Code extension)
 
-The bit value (HIGH or LOW) is held for 100ms
+---
 
-A LOW signal separates each bit
+## ⚙️ How It Works
 
-Sent via a function inside sendChar(char c)
+1. Each character is represented by a 6-bit binary sequence.
+2. To send a bit:
+   - Send a **10ms HIGH pulse** to indicate the start.
+   - Then send **HIGH (1)** or **LOW (0)** for the actual bit (100ms).
+3. Characters are transmitted one bit at a time over the shared pin.
+4. Receiver samples the bit during the data window and reconstructs the character.
 
-✅ Receiving
-Listens for 6 pulses
+---
 
-Reads each bit 50ms after HIGH is detected
+## 🧩 Pin Configuration
 
-Matches received bits to the character table
+| Role         | Pin Number |
+|--------------|------------|
+| Data (TX/RX) | D23        |
+| Optional LED | D2         |
 
-Displays the decoded character
+---
 
-🧪 Serial Terminal Integration
-The receiver is always in listening mode. If you type into the serial monitor, it flips into transmit mode, sends the character, then returns to listening — smooth and automatic.
+## 🧪 Example Usage
 
-⚙️ Usage
-🧰 Hardware
-2x Arduino boards (Uno, Nano, ESP32, etc.)
+- Open Serial Monitor at `115200` baud.
+- Type a message to send. Each character is encoded and transmitted.
+- On the receiver board, the transmitted characters are printed back to the Serial Monitor.
 
-1 jumper wire between GPIO pins on both boards (default: pin 23)
+---
 
-Common GND between devices
+## 📦 PlatformIO Setup
 
-💻 Upload the Code
-Flash the same sketch to both boards
+### 🔗 Install PlatformIO
 
-Open Serial Monitor (115200 baud)
+1. Install [Visual Studio Code](https://code.visualstudio.com/)
+2. Install the [PlatformIO extension](https://platformio.org/install/ide?install=vscode)
 
-Start typing characters on one board’s monitor
+### 🧰 Project Configuration (`platformio.ini`)
 
-The other board will decode and display them
+ini
+[env:esp32dev]
+platform = espressif32
+board = esp32dev
+framework = arduino
+monitor_speed = 115200
 
-🧪 Example Output
-rust
-Copy
-Edit
-Receiver Mode
-Sending-> h
-Sending-> e
-Sending-> y
-Receiver Mode
-hey
-📦 Features
-📡 One-wire, bi-directional character transmission
+---
+# Upload code
+pio run --target upload
 
-🧠 6-bit custom encoding
+# Open serial monitor
+pio device monitor
 
-✨ Supports 0–9, a–z, space, newline
+---
+🧰 Arduino IDE Setup
+Open the .ino file in the Arduino IDE.
 
-🔁 Auto switches between RX/TX based on serial input
+Select your board (e.g., ESP32 Dev Module).
 
-⏱️ Pure digitalWrite() and delay() — no external libs
+Set the baud rate to 115200 in the Serial Monitor.
 
-📷 Visual (Optional GIF/Schematic)
-(Add a GIF of two Arduinos communicating, or a diagram showing the pulse+bit timings)
-Or just a photo of the hardware setup with labels.
+Upload and open the Serial Monitor to start communication.
 
-🙌 Credit & Inspiration
-Crafted for the joy of building something from scratch. Inspired by bit-banging, binary logic, and pushing minimalist boundaries on microcontrollers.
+---
+FILE STRUCTURE:
+Single_Wire_Protocol/
+├── src/
+│   └── main.cpp         # Your main sketch file with class-based logic
+├── platformio.ini       # PlatformIO configuration
+└── README.md            # This file
 
-🔖 License
-MIT – Go forth and hack.
+---
+
+
+🚀 Why This Project?
+This project is a fun dive into low-level communication — perfect for:
+
+Learning how bits are transmitted manually
+
+Testing timing accuracy on ESP32 or Arduino
+
+Creating minimal inter-device comms without I2C/SPI/UART overhead
+
+Impressing friends with a "protocol from scratch"
+
+🙌 Contributing
+Pull requests and feature suggestions are welcome!
+
+📜 License
+MIT License
+
+🧠 Author
+Made with curiosity by [Kunsh Jain]
+Inspired by raw electronics and the joy of blinking bits
