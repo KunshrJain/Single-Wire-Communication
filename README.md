@@ -85,7 +85,9 @@ Set the baud rate to 115200 in the Serial Monitor.
 Upload and open the Serial Monitor to start communication.
 
 ---
+
 FILE STRUCTURE:
+
 Single_Wire_Protocol/
 ├── src/
 │   └── main.cpp         # Your main sketch file with class-based logic
